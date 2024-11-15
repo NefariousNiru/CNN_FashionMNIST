@@ -9,17 +9,16 @@ from validation import train_test
 
 
 def run_fashion_mnist():
-    transform = utils.get_transforms()
-    train_loader, test_loader = utils.load(transform)
+    train_transforms, test_transforms = utils.get_train_test_transforms()
+    train_loader, test_loader = utils.load(train_transforms, test_transforms)
 
     model = CNN()
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     # Train & Evaluate
-    train_test.train(train_loader, optimizer, model, criterion, 1)
-    accuracy = train_test.evaluate(model, test_loader)
-    print(f'Test Accuracy: {accuracy:.2f}%')
+    train_test.train(train_loader, optimizer, model, criterion, 10)
+    train_test.evaluate(model, test_loader)
 
     # Visualise predictions
     utils.visualize_predictions(model, test_loader)

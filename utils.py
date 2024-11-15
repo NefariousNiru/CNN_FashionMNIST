@@ -3,19 +3,28 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 
-def get_transforms():
-    transform = transforms.Compose([
+def get_train_test_transforms():
+    train_transform = transforms.Compose([
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomRotation(10),
+        transforms.RandomAffine(0, translate=(0.1, 0.1)),
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,))
     ])
-    return transform
 
-def load(transform):
-    train_dataset = datasets.FashionMNIST(root='data', train=True, download=True, transform=transform)
-    test_dataset = datasets.FashionMNIST(root='data', train=False, download=True, transform=transform)
+    test_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5,), (0.5,))
+    ])
+
+    return train_transform, test_transform
+
+def load(train_transforms, test_transforms):
+    train_dataset = datasets.FashionMNIST(root='data', train=True, download=True, transform=train_transforms)
+    test_dataset = datasets.FashionMNIST(root='data', train=False, download=True, transform=test_transforms)
 
     # Create data loaders
-    batch_size = 64
+    batch_size = 32
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     return train_loader, test_loader
